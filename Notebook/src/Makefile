@@ -1,0 +1,25 @@
+IDIR=../include
+ODIR=obj
+LDIR=lib
+OLDIR=$(ODIR)/lib
+
+CC=gcc
+CFLAGS = -Wall -std=c11  -g -I$(IDIR)
+
+DEPS=$(IDIR)/$(wildcard *.h)
+SOURCES=$(wildcard *.c)
+MY_LIBS=$(wildcard $(LDIR)/*.c)
+SOURCES_OBJ=$(ODIR)/$(patsubst %.c,%.o,$(SOURCES))
+MY_LIBS_OBJ=$(foreach o, $(patsubst %.c,%.o,$(MY_LIBS)), $(ODIR)/$o)
+
+$(ODIR)/%.o : %.c $(DEPS)
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+notebook: $(SOURCES_OBJ) $(MY_LIBS_OBJ)
+	$(CC) $(CFLAGS) $(wildcard $(ODIR)/*.o)  $(wildcard $(OLDIR)/*.o) -o notebook
+
+.PHONY: clean
+clean:
+	rm obj/*.o
+	rm obj/lib/*.o
+	rm notebook
